@@ -1,0 +1,49 @@
+/*
+ * Product Features module for PrestaShop.
+ * @author APLINE Arkadiusz Pielechowski
+ */
+.apline-productfeatures {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.apline-productfeatures .apf-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.apline-productfeatures a.apf-row:hover .apf-text {
+  text-decoration: underline;
+}
+
+.apline-productfeatures .apf-icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  text-align: center;
+}
+
+.apline-productfeatures .apf-icon img {
+  max-width: 32px;
+  max-height: 32px;
+  display: block;
+}
+
+.apline-productfeatures .apf-icon-entity {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.apline-productfeatures .apf-text {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
