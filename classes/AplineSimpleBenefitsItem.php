@@ -1,6 +1,6 @@
 <?php
 /**
- * Product Features module for PrestaShop.
+ * APLINE Simple Benefits module for PrestaShop.
  *
  * @author    APLINE Arkadiusz Pielechowski
  * @copyright APLINE Arkadiusz Pielechowski
@@ -10,7 +10,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-class ProductFeatureItem extends ObjectModel
+class AplineSimpleBenefitsItem extends ObjectModel
 {
     /** @var string */
     public $image;
@@ -37,8 +37,8 @@ class ProductFeatureItem extends ObjectModel
      * @see ObjectModel::$definition
      */
     public static $definition = [
-        'table' => 'apline_productfeature',
-        'primary' => 'id_apline_productfeature',
+        'table' => 'asb_item',
+        'primary' => 'id_asb_item',
         'multilang' => false,
         'fields' => [
             'image' => ['type' => self::TYPE_STRING, 'validate' => 'isCleanHtml', 'size' => 255],
@@ -63,9 +63,9 @@ class ProductFeatureItem extends ObjectModel
     public static function getActiveItems()
     {
         try {
-            $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'apline_productfeature`
+            $sql = 'SELECT * FROM `' . _DB_PREFIX_ . 'asb_item`
                 WHERE `active` = 1
-                ORDER BY `position` ASC, `id_apline_productfeature` ASC';
+                ORDER BY `position` ASC, `id_asb_item` ASC';
 
             $result = Db::getInstance()->executeS($sql);
 
@@ -82,7 +82,7 @@ class ProductFeatureItem extends ObjectModel
     {
         try {
             $max = (int) Db::getInstance()->getValue(
-                'SELECT MAX(`position`) FROM `' . _DB_PREFIX_ . 'apline_productfeature`'
+                'SELECT MAX(`position`) FROM `' . _DB_PREFIX_ . 'asb_item`'
             );
 
             return $max + 1;

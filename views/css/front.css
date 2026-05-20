@@ -1,15 +1,15 @@
 /*
- * Product Features module for PrestaShop.
+ * APLINE Simple Benefits module for PrestaShop.
  * @author APLINE Arkadiusz Pielechowski
  */
-.apline-productfeatures {
+.apline-simple-benefits {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin: 16px 0;
 }
 
-.apline-productfeatures .apf-row {
+.apline-simple-benefits .asb-row {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -17,11 +17,11 @@
   color: inherit;
 }
 
-.apline-productfeatures a.apf-row:hover .apf-text {
+.apline-simple-benefits a.asb-row:hover .asb-text {
   text-decoration: underline;
 }
 
-.apline-productfeatures .apf-icon {
+.apline-simple-benefits .asb-icon {
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -30,18 +30,18 @@
   text-align: center;
 }
 
-.apline-productfeatures .apf-icon img {
+.apline-simple-benefits .asb-icon img {
   max-width: 32px;
   max-height: 32px;
   display: block;
 }
 
-.apline-productfeatures .apf-icon-entity {
+.apline-simple-benefits .asb-icon-entity {
   font-size: 24px;
   line-height: 1;
 }
 
-.apline-productfeatures .apf-text {
+.apline-simple-benefits .asb-text {
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;

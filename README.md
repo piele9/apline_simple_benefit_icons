@@ -1,4 +1,4 @@
-# APLINE Product Benefit Icons for PrestaShop 9
+# APLINE Simple Benefit Icons for PrestaShop 9
 
 A lightweight, distributable PrestaShop **9.0.x** module that displays a
 configurable block of **benefit rows** (image **or** HTML‑entity icon + text,
@@ -18,7 +18,7 @@ with an optional clickable link) on the product page — similar to the native
   *open in new tab* switch (`target="_blank" rel="noopener noreferrer"`)
 - ✅ **Drag & drop** ordering, enable/disable per row
 - ✅ Configurable display location: product reassurance area, left/right
-  column, product footer — or anywhere via `{widget name='apline_productfeatures'}`
+  column, product footer — or anywhere via `{widget name='apline_simple_benefits'}`
 - ✅ Strict, English‑only validation:
   - required fields, 255‑char limit (rejected, never silently truncated)
   - URL format check
@@ -41,14 +41,14 @@ with an optional clickable link) on the product page — similar to the native
 
 **Via Back Office**
 
-1. Zip the `apline_productfeatures/` folder (the archive must contain the
+1. Zip the `apline_simple_benefits/` folder (the archive must contain the
    folder at its root, with forward‑slash paths).
 2. *Modules → Upload a module* → select the ZIP → install.
 
 **Via FTP**
 
-1. Upload the `apline_productfeatures/` folder to `modules/`.
-2. *Modules* → find **APLINE Product Benefit Icons for PrestaShop 9** → Install.
+1. Upload the `apline_simple_benefits/` folder to `modules/`.
+2. *Modules* → find **APLINE Simple Benefit Icons for PrestaShop 9** → Install.
 
 On install, a demo set of 3 icon rows is created so you can see it working
 immediately.
@@ -62,7 +62,7 @@ immediately.
 3. Optionally embed anywhere in your theme:
 
    ```smarty
-   {widget name='apline_productfeatures'}
+   {widget name='apline_simple_benefits'}
    ```
 
 ### Icon field

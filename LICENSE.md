@@ -1,4 +1,4 @@
-APLINE Product Benefit Icons for PrestaShop 9
+APLINE Simple Benefit Icons for PrestaShop 9
 Custom Attribution License v1.0
 
 Copyright (c) APLINE

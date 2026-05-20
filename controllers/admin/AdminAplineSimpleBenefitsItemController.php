@@ -1,6 +1,6 @@
 <?php
 /**
- * Product Features module for PrestaShop.
+ * APLINE Simple Benefits module for PrestaShop.
  *
  * @author    APLINE Arkadiusz Pielechowski
  * @copyright APLINE Arkadiusz Pielechowski
@@ -10,9 +10,9 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once _PS_MODULE_DIR_ . 'apline_productfeatures/classes/ProductFeatureItem.php';
+require_once _PS_MODULE_DIR_ . 'apline_simple_benefits/classes/AplineSimpleBenefitsItem.php';
 
-class AdminProductFeatureItemController extends ModuleAdminController
+class AdminAplineSimpleBenefitsItemController extends ModuleAdminController
 {
     const MAX_IMG_BYTES = 2097152; // 2 MB
     const MAX_STRING = 255;
@@ -22,43 +22,43 @@ class AdminProductFeatureItemController extends ModuleAdminController
     public function __construct()
     {
         $this->bootstrap = true;
-        $this->table = 'apline_productfeature';
-        $this->className = 'ProductFeatureItem';
-        $this->identifier = 'id_apline_productfeature';
-        $this->position_identifier = 'id_apline_productfeature';
+        $this->table = 'asb_item';
+        $this->className = 'AplineSimpleBenefitsItem';
+        $this->identifier = 'id_asb_item';
+        $this->position_identifier = 'id_asb_item';
         $this->lang = false;
         $this->allow_export = false;
 
         parent::__construct();
 
         $this->fields_list = [
-            'id_apline_productfeature' => [
+            'id_asb_item' => [
                 'title' => $this->trans('ID', [], 'Admin.Global'),
                 'align' => 'center',
                 'class' => 'fixed-width-xs',
             ],
             'image' => [
-                'title' => $this->trans('Image / Icon', [], 'Modules.Aplineproductfeatures.Admin'),
+                'title' => $this->trans('Image / Icon', [], 'Modules.Aplinesimplebenefits.Admin'),
                 'align' => 'center',
                 'callback' => 'printImage',
                 'orderby' => false,
                 'search' => false,
             ],
             'text' => [
-                'title' => $this->trans('Text', [], 'Modules.Aplineproductfeatures.Admin'),
+                'title' => $this->trans('Text', [], 'Modules.Aplinesimplebenefits.Admin'),
             ],
             'url' => [
-                'title' => $this->trans('URL', [], 'Modules.Aplineproductfeatures.Admin'),
+                'title' => $this->trans('URL', [], 'Modules.Aplinesimplebenefits.Admin'),
             ],
             'active' => [
-                'title' => $this->trans('Displayed', [], 'Modules.Aplineproductfeatures.Admin'),
+                'title' => $this->trans('Displayed', [], 'Modules.Aplinesimplebenefits.Admin'),
                 'align' => 'center',
                 'active' => 'active',
                 'type' => 'bool',
                 'orderby' => false,
             ],
             'position' => [
-                'title' => $this->trans('Position', [], 'Modules.Aplineproductfeatures.Admin'),
+                'title' => $this->trans('Position', [], 'Modules.Aplinesimplebenefits.Admin'),
                 'align' => 'center',
                 'position' => 'position',
                 'search' => false,
@@ -92,8 +92,8 @@ class AdminProductFeatureItemController extends ModuleAdminController
     private function getConfigUrl()
     {
         return $this->context->link->getAdminLink('AdminModules', true, [], [
-            'configure' => 'apline_productfeatures',
-            'module_name' => 'apline_productfeatures',
+            'configure' => 'apline_simple_benefits',
+            'module_name' => 'apline_simple_benefits',
         ]);
     }
 
@@ -103,7 +103,7 @@ class AdminProductFeatureItemController extends ModuleAdminController
 
         $this->page_header_toolbar_btn['back_to_config'] = [
             'href' => $this->getConfigUrl(),
-            'desc' => $this->trans('Back to configuration', [], 'Modules.Aplineproductfeatures.Admin'),
+            'desc' => $this->trans('Back to configuration', [], 'Modules.Aplinesimplebenefits.Admin'),
             'icon' => 'process-icon-back',
         ];
     }
@@ -116,7 +116,7 @@ class AdminProductFeatureItemController extends ModuleAdminController
         $back = '<div style="margin:10px 0;"><a class="btn btn-default" href="'
             . htmlspecialchars($this->getConfigUrl(), ENT_QUOTES)
             . '"><i class="icon-chevron-left"></i> '
-            . $this->trans('Back to configuration', [], 'Modules.Aplineproductfeatures.Admin')
+            . $this->trans('Back to configuration', [], 'Modules.Aplinesimplebenefits.Admin')
             . '</a></div>';
 
         $credit = method_exists($this->module, 'renderAplineFooter')
@@ -137,7 +137,7 @@ class AdminProductFeatureItemController extends ModuleAdminController
             return '<img src="' . htmlspecialchars($image, ENT_QUOTES) . '" style="max-height:48px;max-width:80px;">';
         }
         if (!empty($row['icon'])) {
-            $entity = apline_productfeatures::normalizeIcon($row['icon']);
+            $entity = apline_simple_benefits::normalizeIcon($row['icon']);
             if ($entity !== '') {
                 return '<span style="font-size:28px;line-height:1;">' . $entity . '</span>';
             }
@@ -150,43 +150,43 @@ class AdminProductFeatureItemController extends ModuleAdminController
     {
         $this->fields_form = [
             'legend' => [
-                'title' => $this->trans('Product feature row', [], 'Modules.Aplineproductfeatures.Admin'),
+                'title' => $this->trans('Simple benefit row', [], 'Modules.Aplinesimplebenefits.Admin'),
                 'icon' => 'icon-th-list',
             ],
             'input' => [
                 [
                     'type' => 'file',
-                    'label' => $this->trans('Image', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('Image', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'image_file',
-                    'desc' => $this->trans('Optional. Allowed: JPG, PNG, WEBP. Max 2 MB. Leave empty to keep the current image or to use an icon instead.', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'desc' => $this->trans('Optional. Allowed: JPG, PNG, WEBP. Max 2 MB. Leave empty to keep the current image or to use an icon instead.', [], 'Modules.Aplinesimplebenefits.Admin'),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('Icon', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('Icon', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'icon',
-                    'desc' => $this->trans('Optional alternative to an image: a unicode hex code (e.g. 1F69A) or an HTML entity (e.g. &#x1F69A;). Used when no image is set.', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'desc' => $this->trans('Optional alternative to an image: a unicode hex code (e.g. 1F69A) or an HTML entity (e.g. &#x1F69A;). Used when no image is set.', [], 'Modules.Aplinesimplebenefits.Admin'),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('Alt', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('Alt', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'alt',
-                    'desc' => $this->trans('Image alternative text. Required when an image is set. If left empty it is auto-filled from the image file name.', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'desc' => $this->trans('Image alternative text. Required when an image is set. If left empty it is auto-filled from the image file name.', [], 'Modules.Aplinesimplebenefits.Admin'),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('Text', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('Text', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'text',
                     'required' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('URL', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('URL', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'url',
-                    'desc' => $this->trans('Optional. When set, the whole row becomes a link.', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'desc' => $this->trans('Optional. When set, the whole row becomes a link.', [], 'Modules.Aplinesimplebenefits.Admin'),
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->trans('Open link in new tab', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('Open link in new tab', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'new_tab',
                     'is_bool' => true,
                     'values' => [
@@ -196,7 +196,7 @@ class AdminProductFeatureItemController extends ModuleAdminController
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->trans('Displayed', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'label' => $this->trans('Displayed', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'name' => 'active',
                     'is_bool' => true,
                     'values' => [
@@ -225,9 +225,9 @@ class AdminProductFeatureItemController extends ModuleAdminController
         if ($isAdd || $isUpdate) {
             $existing = null;
             if ($isUpdate) {
-                $existing = new ProductFeatureItem((int) Tools::getValue($this->identifier));
+                $existing = new AplineSimpleBenefitsItem((int) Tools::getValue($this->identifier));
                 if (!Validate::isLoadedObject($existing)) {
-                    $this->errors[] = $this->trans('The item you are trying to edit does not exist.', [], 'Modules.Aplineproductfeatures.Admin');
+                    $this->errors[] = $this->trans('The item you are trying to edit does not exist.', [], 'Modules.Aplinesimplebenefits.Admin');
 
                     return false;
                 }
@@ -250,7 +250,7 @@ class AdminProductFeatureItemController extends ModuleAdminController
      * values into $_POST so the standard ObjectModel save picks them up.
      * On any failure, populate $this->errors and return false (no save happens).
      *
-     * @param ProductFeatureItem|null $existing
+     * @param AplineSimpleBenefitsItem|null $existing
      *
      * @return bool
      */
@@ -263,24 +263,24 @@ class AdminProductFeatureItemController extends ModuleAdminController
 
         // 1. Required: text.
         if ($text === '') {
-            $this->errors[] = $this->trans('The field "Text" is required.', [], 'Modules.Aplineproductfeatures.Admin');
+            $this->errors[] = $this->trans('The field "Text" is required.', [], 'Modules.Aplinesimplebenefits.Admin');
         }
 
         // 2. Max length 255 (reject, never truncate).
         foreach (['Text' => $text, 'Alt' => $alt, 'URL' => $url, 'Icon' => $icon] as $label => $value) {
             if (mb_strlen($value) > self::MAX_STRING) {
-                $this->errors[] = $this->trans('The field "%s" exceeds the maximum length of 255 characters.', [$label], 'Modules.Aplineproductfeatures.Admin');
+                $this->errors[] = $this->trans('The field "%s" exceeds the maximum length of 255 characters.', [$label], 'Modules.Aplinesimplebenefits.Admin');
             }
         }
 
         // 3. URL format.
         if ($url !== '' && !Validate::isUrl($url)) {
-            $this->errors[] = $this->trans('The URL is not valid.', [], 'Modules.Aplineproductfeatures.Admin');
+            $this->errors[] = $this->trans('The URL is not valid.', [], 'Modules.Aplinesimplebenefits.Admin');
         }
 
         // 6. Icon must be a unicode hex or an HTML entity.
         if ($icon !== '' && !preg_match('/^(&#x?[0-9A-Fa-f]+;|&[a-zA-Z]+;|[0-9A-Fa-f]{1,6})$/', $icon)) {
-            $this->errors[] = $this->trans('Icon must be a unicode hex code (e.g. 1F69A) or an HTML entity.', [], 'Modules.Aplineproductfeatures.Admin');
+            $this->errors[] = $this->trans('Icon must be a unicode hex code (e.g. 1F69A) or an HTML entity.', [], 'Modules.Aplinesimplebenefits.Admin');
         }
 
         // 4. Image upload validation (only when a file was actually sent).
@@ -294,14 +294,14 @@ class AdminProductFeatureItemController extends ModuleAdminController
             $file = $_FILES['image_file'];
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
-                $this->errors[] = $this->trans('The image upload failed. Please try again.', [], 'Modules.Aplineproductfeatures.Admin');
+                $this->errors[] = $this->trans('The image upload failed. Please try again.', [], 'Modules.Aplinesimplebenefits.Admin');
             } else {
                 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
                 if (!in_array($ext, self::ALLOWED_EXT, true)) {
-                    $this->errors[] = $this->trans('Invalid image format. Allowed formats: JPG, PNG, WEBP.', [], 'Modules.Aplineproductfeatures.Admin');
+                    $this->errors[] = $this->trans('Invalid image format. Allowed formats: JPG, PNG, WEBP.', [], 'Modules.Aplinesimplebenefits.Admin');
                 } elseif ((int) $file['size'] > self::MAX_IMG_BYTES) {
-                    $this->errors[] = $this->trans('The image is too large. Maximum size is 2 MB.', [], 'Modules.Aplineproductfeatures.Admin');
+                    $this->errors[] = $this->trans('The image is too large. Maximum size is 2 MB.', [], 'Modules.Aplinesimplebenefits.Admin');
                 } else {
                     // Inspect real content, not just the extension: blocks an
                     // executable payload renamed with an image extension.
@@ -312,16 +312,16 @@ class AdminProductFeatureItemController extends ModuleAdminController
                         : in_array($realMime, self::ALLOWED_MIME, true);
 
                     if (!$info || !in_array($realMime, self::ALLOWED_MIME, true) || !$isRealImage) {
-                        $this->errors[] = $this->trans('The uploaded file is not a valid image.', [], 'Modules.Aplineproductfeatures.Admin');
+                        $this->errors[] = $this->trans('The uploaded file is not a valid image.', [], 'Modules.Aplinesimplebenefits.Admin');
                     } else {
-                        $fileName = 'apf_' . uniqid('', true) . '.' . $ext;
+                        $fileName = 'asb_' . uniqid('', true) . '.' . $ext;
                         $dest = $this->module->getUploadDir() . $fileName;
 
                         if (!@move_uploaded_file($file['tmp_name'], $dest)) {
-                            $this->errors[] = $this->trans('Could not save the uploaded image. Check folder permissions.', [], 'Modules.Aplineproductfeatures.Admin');
+                            $this->errors[] = $this->trans('Could not save the uploaded image. Check folder permissions.', [], 'Modules.Aplinesimplebenefits.Admin');
                         } else {
                             @chmod($dest, 0644);
-                            $newImagePath = __PS_BASE_URI__ . 'modules/apline_productfeatures/views/img/' . $fileName;
+                            $newImagePath = __PS_BASE_URI__ . 'modules/apline_simple_benefits/views/img/' . $fileName;
                             $autoAlt = pathinfo($file['name'], PATHINFO_FILENAME);
                         }
                     }
@@ -344,7 +344,7 @@ class AdminProductFeatureItemController extends ModuleAdminController
                 $alt = $existing->alt;
             }
             if ($alt === '') {
-                $this->errors[] = $this->trans('The field "Alt" is required when an image is set.', [], 'Modules.Aplineproductfeatures.Admin');
+                $this->errors[] = $this->trans('The field "Alt" is required when an image is set.', [], 'Modules.Aplinesimplebenefits.Admin');
             }
         }
 
@@ -411,9 +411,9 @@ class AdminProductFeatureItemController extends ModuleAdminController
                 continue;
             }
             Db::getInstance()->update(
-                'apline_productfeature',
+                'asb_item',
                 ['position' => $pos++],
-                'id_apline_productfeature = ' . $id
+                'id_asb_item = ' . $id
             );
         }
 

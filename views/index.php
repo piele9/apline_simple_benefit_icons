@@ -1,6 +1,6 @@
 <?php
 /**
- * Product Features module for PrestaShop.
+ * APLINE Simple Benefits module for PrestaShop.
  *
  * @author    APLINE Arkadiusz Pielechowski
  * @copyright APLINE Arkadiusz Pielechowski

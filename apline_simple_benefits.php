@@ -1,6 +1,6 @@
 <?php
 /**
- * Product Features module for PrestaShop.
+ * APLINE Simple Benefits module for PrestaShop.
  *
  * A lightweight, distributable block of rows (image OR HTML-entity icon + text,
  * optional clickable URL). Classic PrestaShop API, no front build step.
@@ -13,19 +13,19 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once __DIR__ . '/classes/ProductFeatureItem.php';
+require_once __DIR__ . '/classes/AplineSimpleBenefitsItem.php';
 
 use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
 
-class apline_productfeatures extends Module implements WidgetInterface
+class apline_simple_benefits extends Module implements WidgetInterface
 {
-    const HOOK_KEY = 'APF_HOOK';
-    const TEXT_COLOR_KEY = 'APF_TEXT_COLOR';
+    const HOOK_KEY = 'ASB_HOOK';
+    const TEXT_COLOR_KEY = 'ASB_TEXT_COLOR';
 
-    const ADMIN_CONTROLLER = 'AdminProductFeatureItem';
+    const ADMIN_CONTROLLER = 'AdminAplineSimpleBenefitsItem';
 
     /** @var string */
-    private $templateFile = 'module:apline_productfeatures/views/templates/hook/block.tpl';
+    private $templateFile = 'module:apline_simple_benefits/views/templates/hook/block.tpl';
 
     /**
      * Hooks the block may be displayed on. Key = hook name, value = admin label.
@@ -44,7 +44,7 @@ class apline_productfeatures extends Module implements WidgetInterface
 
     public function __construct()
     {
-        $this->name = 'apline_productfeatures';
+        $this->name = 'apline_simple_benefits';
         $this->tab = 'front_office_features';
         $this->version = '1.0.0';
         $this->author = 'APLINE Arkadiusz Pielechowski';
@@ -53,9 +53,9 @@ class apline_productfeatures extends Module implements WidgetInterface
 
         parent::__construct();
 
-        $this->displayName = $this->trans('APLINE Product Benefit Icons for PrestaShop 9', [], 'Modules.Aplineproductfeatures.Admin');
-        $this->description = $this->trans('Display a configurable block of benefit rows (image or icon + text, optional link) on the product page.', [], 'Modules.Aplineproductfeatures.Admin');
-        $this->confirmUninstall = $this->trans('Are you sure you want to uninstall this module? All rows will be deleted.', [], 'Modules.Aplineproductfeatures.Admin');
+        $this->displayName = $this->trans('APLINE Simple Benefit Icons for PrestaShop 9', [], 'Modules.Aplinesimplebenefits.Admin');
+        $this->description = $this->trans('Display a configurable block of benefit rows (image or icon + text, optional link) on the product page.', [], 'Modules.Aplinesimplebenefits.Admin');
+        $this->confirmUninstall = $this->trans('Are you sure you want to uninstall this module? All rows will be deleted.', [], 'Modules.Aplinesimplebenefits.Admin');
 
         $this->ps_versions_compliancy = ['min' => '9.0', 'max' => _PS_VERSION_];
     }
@@ -91,7 +91,7 @@ class apline_productfeatures extends Module implements WidgetInterface
         ) {
             // Roll back to a clean state so the shop is never left half-installed.
             $this->uninstall();
-            $this->_errors[] = $this->trans('Installation failed and was rolled back. Please check folder permissions and try again.', [], 'Modules.Aplineproductfeatures.Admin');
+            $this->_errors[] = $this->trans('Installation failed and was rolled back. Please check folder permissions and try again.', [], 'Modules.Aplinesimplebenefits.Admin');
 
             return false;
         }
@@ -105,7 +105,7 @@ class apline_productfeatures extends Module implements WidgetInterface
         $this->uninstallTab();
         $this->deleteUploadedFiles();
 
-        Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'apline_productfeature`');
+        Db::getInstance()->execute('DROP TABLE IF EXISTS `' . _DB_PREFIX_ . 'asb_item`');
 
         Configuration::deleteByName(self::HOOK_KEY);
         Configuration::deleteByName(self::TEXT_COLOR_KEY);
@@ -118,8 +118,8 @@ class apline_productfeatures extends Module implements WidgetInterface
      */
     private function installDb()
     {
-        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'apline_productfeature` (
-            `id_apline_productfeature` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+        $sql = 'CREATE TABLE IF NOT EXISTS `' . _DB_PREFIX_ . 'asb_item` (
+            `id_asb_item` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
             `image` VARCHAR(255) NULL,
             `icon` VARCHAR(255) NULL,
             `alt` VARCHAR(255) NULL,
@@ -130,7 +130,7 @@ class apline_productfeatures extends Module implements WidgetInterface
             `position` INT(10) UNSIGNED NOT NULL DEFAULT 0,
             `date_add` DATETIME NOT NULL,
             `date_upd` DATETIME NULL,
-            PRIMARY KEY (`id_apline_productfeature`)
+            PRIMARY KEY (`id_asb_item`)
         ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8mb4;';
 
         if (!Db::getInstance()->execute($sql)) {
@@ -146,7 +146,7 @@ class apline_productfeatures extends Module implements WidgetInterface
         ];
         $pos = 1;
         foreach ($demo as $row) {
-            $ok = Db::getInstance()->insert('apline_productfeature', [
+            $ok = Db::getInstance()->insert('asb_item', [
                 'image' => '',
                 'icon' => pSQL($row['icon']),
                 'alt' => '',
@@ -204,7 +204,7 @@ class apline_productfeatures extends Module implements WidgetInterface
         // Hidden tab (no visible parent): managed from the module configuration page.
         $tab->id_parent = -1;
         foreach (Language::getLanguages(false) as $lang) {
-            $tab->name[$lang['id_lang']] = 'Product Benefit Icons';
+            $tab->name[$lang['id_lang']] = 'Simple Benefit Icons';
         }
 
         return (bool) $tab->add();
@@ -239,7 +239,7 @@ class apline_productfeatures extends Module implements WidgetInterface
             return;
         }
 
-        foreach ((array) glob($dir . 'apf_*') as $file) {
+        foreach ((array) glob($dir . 'asb_*') as $file) {
             if (is_file($file)) {
                 @unlink($file);
             }
@@ -275,29 +275,29 @@ class apline_productfeatures extends Module implements WidgetInterface
     {
         $output = '';
 
-        if (Tools::isSubmit('submitApfConfig')) {
+        if (Tools::isSubmit('submitAsbConfig')) {
             $hook = (string) Tools::getValue(self::HOOK_KEY);
             $color = (string) Tools::getValue(self::TEXT_COLOR_KEY);
 
             if (!array_key_exists($hook, self::getAvailableHooks())) {
-                $output .= $this->displayError($this->trans('Invalid display hook selected.', [], 'Modules.Aplineproductfeatures.Admin'));
+                $output .= $this->displayError($this->trans('Invalid display hook selected.', [], 'Modules.Aplinesimplebenefits.Admin'));
             } elseif ($color !== '' && !Validate::isColor($color)) {
-                $output .= $this->displayError($this->trans('The text color is not a valid color.', [], 'Modules.Aplineproductfeatures.Admin'));
+                $output .= $this->displayError($this->trans('The text color is not a valid color.', [], 'Modules.Aplinesimplebenefits.Admin'));
             } else {
                 Configuration::updateValue(self::HOOK_KEY, $hook);
                 Configuration::updateValue(self::TEXT_COLOR_KEY, $color !== '' ? $color : '#000000');
-                $output .= $this->displayConfirmation($this->trans('Settings updated.', [], 'Modules.Aplineproductfeatures.Admin'));
+                $output .= $this->displayConfirmation($this->trans('Settings updated.', [], 'Modules.Aplinesimplebenefits.Admin'));
             }
         }
 
         if (!$this->isUploadDirWritable()) {
-            $output .= $this->displayWarning($this->trans('The upload folder is not writable: %s. Image uploads will fail until you fix its permissions (e.g. chmod 0775).', [$this->getUploadDir()], 'Modules.Aplineproductfeatures.Admin'));
+            $output .= $this->displayWarning($this->trans('The upload folder is not writable: %s. Image uploads will fail until you fix its permissions (e.g. chmod 0775).', [$this->getUploadDir()], 'Modules.Aplinesimplebenefits.Admin'));
         }
 
         $manageUrl = $this->context->link->getAdminLink(self::ADMIN_CONTROLLER);
 
         $this->context->smarty->assign([
-            'apf_manage_url' => $manageUrl,
+            'asb_manage_url' => $manageUrl,
         ]);
         $output .= $this->display(__FILE__, 'views/templates/admin/configure.tpl');
 
@@ -320,7 +320,7 @@ class apline_productfeatures extends Module implements WidgetInterface
             .apline-credit a { font-weight: 600; }
         </style>
         <div class="apline-credit">
-            ' . $this->trans('Module created by', [], 'Modules.Aplineproductfeatures.Admin') . '
+            ' . $this->trans('Module created by', [], 'Modules.Aplinesimplebenefits.Admin') . '
             <a href="https://apline.pl" target="_blank" rel="noopener noreferrer">APLINE</a>
         </div>';
     }
@@ -334,8 +334,8 @@ class apline_productfeatures extends Module implements WidgetInterface
     {
         return '
         <div class="panel">
-            <h3>&#9749; ' . $this->trans('Like this module?', [], 'Modules.Aplineproductfeatures.Admin') . '</h3>
-            <p>' . $this->trans('Need custom PrestaShop development, performance optimization or integrations?', [], 'Modules.Aplineproductfeatures.Admin') . '</p>
+            <h3>&#9749; ' . $this->trans('Like this module?', [], 'Modules.Aplinesimplebenefits.Admin') . '</h3>
+            <p>' . $this->trans('Need custom PrestaShop development, performance optimization or integrations?', [], 'Modules.Aplinesimplebenefits.Admin') . '</p>
             <a class="btn btn-default" href="https://apline.pl" target="_blank" rel="noopener noreferrer">&#8594; APLINE.PL</a>
         </div>';
     }
@@ -353,20 +353,20 @@ class apline_productfeatures extends Module implements WidgetInterface
         $fields_form = [
             'form' => [
                 'legend' => [
-                    'title' => $this->trans('Display settings', [], 'Modules.Aplineproductfeatures.Admin'),
+                    'title' => $this->trans('Display settings', [], 'Modules.Aplinesimplebenefits.Admin'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => [
                     [
                         'type' => 'select',
-                        'label' => $this->trans('Display location', [], 'Modules.Aplineproductfeatures.Admin'),
+                        'label' => $this->trans('Display location', [], 'Modules.Aplinesimplebenefits.Admin'),
                         'name' => self::HOOK_KEY,
                         'options' => ['query' => $hookOptions, 'id' => 'id', 'name' => 'name'],
-                        'desc' => $this->trans('You can also display the block anywhere with {widget name=\'apline_productfeatures\'}.', [], 'Modules.Aplineproductfeatures.Admin'),
+                        'desc' => $this->trans('You can also display the block anywhere with {widget name=\'apline_simple_benefits\'}.', [], 'Modules.Aplinesimplebenefits.Admin'),
                     ],
                     [
                         'type' => 'color',
-                        'label' => $this->trans('Text color', [], 'Modules.Aplineproductfeatures.Admin'),
+                        'label' => $this->trans('Text color', [], 'Modules.Aplinesimplebenefits.Admin'),
                         'name' => self::TEXT_COLOR_KEY,
                     ],
                 ],
@@ -380,7 +380,7 @@ class apline_productfeatures extends Module implements WidgetInterface
         $helper->identifier = $this->identifier;
         $helper->token = Tools::getAdminTokenLite('AdminModules');
         $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
-        $helper->submit_action = 'submitApfConfig';
+        $helper->submit_action = 'submitAsbConfig';
         $helper->fields_value = [
             self::HOOK_KEY => Configuration::get(self::HOOK_KEY),
             self::TEXT_COLOR_KEY => Configuration::get(self::TEXT_COLOR_KEY),
@@ -392,7 +392,7 @@ class apline_productfeatures extends Module implements WidgetInterface
     public function hookActionFrontControllerSetMedia()
     {
         $this->context->controller->registerStylesheet(
-            'apline-productfeatures',
+            'apline-simple-benefits',
             'modules/' . $this->name . '/views/css/front.css'
         );
     }
@@ -436,7 +436,7 @@ class apline_productfeatures extends Module implements WidgetInterface
 
             return $this->display(__FILE__, 'views/templates/hook/block.tpl');
         } catch (\Throwable $e) {
-            PrestaShopLogger::addLog('apline_productfeatures: ' . $e->getMessage(), 3);
+            PrestaShopLogger::addLog('apline_simple_benefits: ' . $e->getMessage(), 3);
 
             return '';
         }
@@ -449,7 +449,7 @@ class apline_productfeatures extends Module implements WidgetInterface
 
             return $this->fetch($this->templateFile);
         } catch (\Throwable $e) {
-            PrestaShopLogger::addLog('apline_productfeatures: ' . $e->getMessage(), 3);
+            PrestaShopLogger::addLog('apline_simple_benefits: ' . $e->getMessage(), 3);
 
             return '';
         }
@@ -466,7 +466,7 @@ class apline_productfeatures extends Module implements WidgetInterface
     private function buildVariables()
     {
         $items = [];
-        foreach (ProductFeatureItem::getActiveItems() as $row) {
+        foreach (AplineSimpleBenefitsItem::getActiveItems() as $row) {
             $row['icon'] = self::normalizeIcon(isset($row['icon']) ? $row['icon'] : '');
             $items[] = $row;
         }
