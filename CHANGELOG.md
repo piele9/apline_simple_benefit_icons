@@ -4,6 +4,16 @@ All notable changes to **APLINE Simple Benefit Icons for PrestaShop 9** will be
 documented in this file. Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] – 2026-06-17
+
+### Changed
+- Updated the module logo to the branded APLINE artwork.
+
+### Internal
+- Excluded internal development files from the repository and the
+  installable zip (`CLAUDE.md`, `HANDOFF.md`, `PLAN.md`, `checkpoints/`
+  added to `.gitignore`).
+
 ## [1.0.0] – 2026-05-20
 
 Initial public release.
