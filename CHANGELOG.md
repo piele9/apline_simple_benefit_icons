@@ -1,49 +1,28 @@
-# Changelog
+# Historia zmian
 
-All notable changes to **APLINE Simple Benefit Icons for PrestaShop 9** will be
-documented in this file. Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
-and adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+## 1.1.0 — 2026-10-08
 
-## [1.0.1] – 2026-06-17
+- Polski tekst źródłowy panelu, komunikatów i nazw miejsc wyświetlania.
+- Duży przycisk Zarządzaj korzyściami (co najmniej 48 px).
+- Polska nazwa zakładki na instalacji i aktualizacji, z zachowaniem danych.
+- Neutralne przykładowe wiersze na świeżej instalacji, bez obietnic o dostawie lub zwrotach.
+- Polskie instrukcje instalacji i konfiguracji.
 
-### Changed
-- Updated the module logo to the branded APLINE artwork.
+## 1.0.3 — 2026-10-08
 
-### Internal
-- Excluded internal development files from the repository and the
-  installable zip (`CLAUDE.md`, `HANDOFF.md`, `PLAN.md`, `checkpoints/`
-  added to `.gitignore`).
+- Ukrywanie bloku na produktach wirtualnych.
 
-## [1.0.0] – 2026-05-20
+## 1.0.2 — 2026-09-15
 
-Initial public release.
+- Naprawa rozbieżności między konfiguracją miejsca wyświetlania i zarejestrowanymi hookami.
+- Zmiana ustawienia przełącza rejestrację; skrypt aktualizacji naprawia istniejące instalacje.
 
-### Added
-- Configurable block of **benefit rows** (image **or** HTML‑entity icon + text,
-  optional clickable link) for PrestaShop **9.0.x**.
-- Configurable display location: product reassurance area, left/right column,
-  product footer — or anywhere via `{widget name='apline_simple_benefit_icons'}`.
-- Per‑row *open in new tab* switch (`target="_blank" rel="noopener noreferrer"`).
-- Drag & drop ordering, enable/disable per row.
-- Strict English‑only validation: required fields, 255‑char limit (rejected,
-  never silently truncated), URL format check, icon whitelist (unicode hex /
-  HTML entity), `alt` required when an image is set (auto‑filled from file name).
-- Hardened image upload: JPG / PNG / WEBP only, real MIME inspection (not just
-  the extension), 2 MB size cap → blocks disguised executables.
-- Crash‑safe hooks and `WidgetInterface` rendering (`try/catch` → empty block,
-  never a 500).
-- Failed install rolls back to a clean state; uninstall is idempotent.
-- *Back to configuration* breadcrumb button from the rows management list.
-- APLINE attribution block on the configuration page **and** under the rows
-  list, with a "Like this module?" call to action linking to https://apline.pl.
-- Custom Attribution License v1.0 ([LICENSE.md](LICENSE.md)).
+## 1.0.1 — 2026-06-17
 
-### Naming convention (SIMPLE family)
-This module is the first of an **APLINE SIMPLE** family of PrestaShop modules.
-The convention is:
+- Logo marki APLINE i porządek zawartości paczki instalacyjnej.
 
-- folder / main `.php` file / PHP class / `$this->name`: `apline_simple_<feature>` (all four MUST match — otherwise the back-office upload rejects the zip)
-- DB table: `<abbrev>_item` (here: `asbi_item`)
-- Configuration keys: `<ABBREV>_*` (here: `ASBI_*`)
-- Translation domain: `Modules.Aplinesimple<feature>.Admin` (underscores stripped, ucfirst — here: `Modules.Aplinesimplebenefiticons.Admin`)
-- Repository: `apline-simple-<feature>-prestashop`
+## 1.0.0 — 2026-05-20
+
+- Pierwsze wydanie: konfigurowalne wiersze z ikoną lub obrazem, tekstem i linkiem.
+- Wybór hooka, Widget API, kolejność i widoczność; kontrola formatu i rozmiaru obrazów.
+- Widoczny odnośnik autora i Custom Attribution License v1.0.

@@ -22,6 +22,9 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
     const HOOK_KEY = 'ASBI_HOOK';
     const TEXT_COLOR_KEY = 'ASBI_TEXT_COLOR';
 
+    /** Hook registered by a fresh install / used to repair a broken one. Must stay a key of getAvailableHooks(). */
+    const DEFAULT_HOOK = 'displayProductAdditionalInfo';
+
     const ADMIN_CONTROLLER = 'AdminAplineSimpleBenefitIconsItem';
 
     /** @var string */
@@ -35,10 +38,10 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
     public static function getAvailableHooks()
     {
         return [
-            'displayProductAdditionalInfo' => 'Product page (reassurance area)',
-            'displayLeftColumn' => 'Left column',
-            'displayRightColumn' => 'Right column',
-            'displayFooterProduct' => 'Product page footer',
+            'displayProductAdditionalInfo' => 'Strona produktu (blok zaufania)',
+            'displayLeftColumn' => 'Lewa kolumna',
+            'displayRightColumn' => 'Prawa kolumna',
+            'displayFooterProduct' => 'Stopka strony produktu',
         ];
     }
 
@@ -46,16 +49,16 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
     {
         $this->name = 'apline_simple_benefit_icons';
         $this->tab = 'front_office_features';
-        $this->version = '1.0.1';
+        $this->version = '1.1.0';
         $this->author = 'APLINE Arkadiusz Pielechowski';
         $this->need_instance = false;
         $this->bootstrap = true;
 
         parent::__construct();
 
-        $this->displayName = $this->trans('APLINE Simple Benefit Icons for PrestaShop 9', [], 'Modules.Aplinesimplebenefiticons.Admin');
-        $this->description = $this->trans('Display a configurable block of benefit rows (image or icon + text, optional link) on the product page.', [], 'Modules.Aplinesimplebenefiticons.Admin');
-        $this->confirmUninstall = $this->trans('Are you sure you want to uninstall this module? All rows will be deleted.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+        $this->displayName = $this->trans('APLINE — ikony korzyści dla PrestaShop 9', [], 'Modules.Aplinesimplebenefiticons.Admin');
+        $this->description = $this->trans('Wyświetlaj na stronie produktu blok korzyści: obraz lub ikona z tekstem i opcjonalnym linkiem.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+        $this->confirmUninstall = $this->trans('Czy chcesz odinstalować moduł? Wszystkie wiersze zostaną usunięte.', [], 'Modules.Aplinesimplebenefiticons.Admin');
 
         $this->ps_versions_compliancy = ['min' => '9.0', 'max' => _PS_VERSION_];
     }
@@ -91,7 +94,7 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
         ) {
             // Roll back to a clean state so the shop is never left half-installed.
             $this->uninstall();
-            $this->_errors[] = $this->trans('Installation failed and was rolled back. Please check folder permissions and try again.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+            $this->_errors[] = $this->trans('Instalacja nie powiodła się i została wycofana. Sprawdź uprawnienia katalogów i spróbuj ponownie.', [], 'Modules.Aplinesimplebenefiticons.Admin');
 
             return false;
         }
@@ -140,9 +143,9 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
         // Demo rows (icon-entity based so no file dependency is needed).
         $now = date('Y-m-d H:i:s');
         $demo = [
-            ['icon' => '1F69A', 'text' => 'Free delivery'],
-            ['icon' => '23F1', 'text' => 'Same day shipping'],
-            ['icon' => '21A9', 'text' => '30 day return'],
+            ['icon' => '1F69A', 'text' => 'Przykładowa korzyść: dostawa'],
+            ['icon' => '23F1', 'text' => 'Przykładowa korzyść: wysyłka'],
+            ['icon' => '21A9', 'text' => 'Przykładowa korzyść: zwroty'],
         ];
         $pos = 1;
         foreach ($demo as $row) {
@@ -171,18 +174,52 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
      */
     private function installConfiguration()
     {
-        return Configuration::updateValue(self::HOOK_KEY, 'displayProductAdditionalInfo')
+        return Configuration::updateValue(self::HOOK_KEY, self::DEFAULT_HOOK)
             && Configuration::updateValue(self::TEXT_COLOR_KEY, '#000000');
     }
 
     /**
+     * Registers only the hook selected in configuration (installConfiguration()
+     * runs first, so Configuration::get(self::HOOK_KEY) is already the default).
+     * A previous version of this method registered every hook from
+     * getAvailableHooks() regardless of the configured one, which could leave
+     * the module rendering nothing at all if the two ever fell out of sync
+     * (see switchHook() and upgrade/upgrade-1.0.2.php for the repair path).
+     *
      * @return bool
      */
     private function installHooks()
     {
         $ok = $this->registerHook('actionFrontControllerSetMedia');
-        foreach (array_keys(self::getAvailableHooks()) as $hook) {
-            $ok = $ok && $this->registerHook($hook);
+        $ok = $ok && $this->registerHook((string) Configuration::get(self::HOOK_KEY));
+
+        return $ok;
+    }
+
+    /**
+     * Move the module's display hook registration from $oldHook to $newHook,
+     * so the actual `ps_hook_module` registration never drifts away from the
+     * ASBI_HOOK configuration value (the drift was the root cause of the
+     * module silently rendering nothing after changing the display location).
+     * Idempotent and safe to call with $oldHook === $newHook.
+     *
+     * @param string $oldHook
+     * @param string $newHook
+     *
+     * @return bool
+     */
+    private function switchHook($oldHook, $newHook)
+    {
+        if ($oldHook === $newHook) {
+            return true;
+        }
+
+        $ok = true;
+        if ($oldHook !== '' && $this->isRegisteredInHook($oldHook)) {
+            $ok = $this->unregisterHook($oldHook) && $ok;
+        }
+        if (!$this->isRegisteredInHook($newHook)) {
+            $ok = $this->registerHook($newHook) && $ok;
         }
 
         return $ok;
@@ -204,7 +241,7 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
         // Hidden tab (no visible parent): managed from the module configuration page.
         $tab->id_parent = -1;
         foreach (Language::getLanguages(false) as $lang) {
-            $tab->name[$lang['id_lang']] = 'Simple Benefit Icons';
+            $tab->name[$lang['id_lang']] = 'Ikony korzyści APLINE';
         }
 
         return (bool) $tab->add();
@@ -273,6 +310,7 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
 
     public function getContent()
     {
+        $this->context->controller->addCSS($this->getPathUri() . 'views/css/admin.css');
         $output = '';
 
         if (Tools::isSubmit('submitAsbiConfig')) {
@@ -280,18 +318,22 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
             $color = (string) Tools::getValue(self::TEXT_COLOR_KEY);
 
             if (!array_key_exists($hook, self::getAvailableHooks())) {
-                $output .= $this->displayError($this->trans('Invalid display hook selected.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
+                $output .= $this->displayError($this->trans('Wybrano nieprawidłowe miejsce wyświetlania.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
             } elseif ($color !== '' && !Validate::isColor($color)) {
-                $output .= $this->displayError($this->trans('The text color is not a valid color.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
+                $output .= $this->displayError($this->trans('Podano nieprawidłowy kolor tekstu.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
             } else {
+                $oldHook = (string) Configuration::get(self::HOOK_KEY);
+                if (!$this->switchHook($oldHook, $hook)) {
+                    $output .= $this->displayWarning($this->trans('Zapisano miejsce wyświetlania, ale nie udało się w pełni przełączyć hooka. Otwórz ponownie tę stronę. Jeśli blok nadal nie działa, wykonaj kopię danych i ponownie zainstaluj moduł.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
+                }
                 Configuration::updateValue(self::HOOK_KEY, $hook);
                 Configuration::updateValue(self::TEXT_COLOR_KEY, $color !== '' ? $color : '#000000');
-                $output .= $this->displayConfirmation($this->trans('Settings updated.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
+                $output .= $this->displayConfirmation($this->trans('Zapisano ustawienia.', [], 'Modules.Aplinesimplebenefiticons.Admin'));
             }
         }
 
         if (!$this->isUploadDirWritable()) {
-            $output .= $this->displayWarning($this->trans('The upload folder is not writable: %s. Image uploads will fail until you fix its permissions (e.g. chmod 0775).', [$this->getUploadDir()], 'Modules.Aplinesimplebenefiticons.Admin'));
+            $output .= $this->displayWarning($this->trans('Brak prawa zapisu w katalogu obrazów: %s. Przesyłanie obrazów wymaga poprawnych uprawnień (np. chmod 0775).', [$this->getUploadDir()], 'Modules.Aplinesimplebenefiticons.Admin'));
         }
 
         $manageUrl = $this->context->link->getAdminLink(self::ADMIN_CONTROLLER);
@@ -320,7 +362,7 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
             .apline-credit a { font-weight: 600; }
         </style>
         <div class="apline-credit">
-            ' . $this->trans('Module created by', [], 'Modules.Aplinesimplebenefiticons.Admin') . '
+            ' . $this->trans('Autor modułu:', [], 'Modules.Aplinesimplebenefiticons.Admin') . '
             <a href="https://apline.pl" target="_blank" rel="noopener noreferrer">APLINE</a>
         </div>';
     }
@@ -334,8 +376,8 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
     {
         return '
         <div class="panel">
-            <h3>&#9749; ' . $this->trans('Like this module?', [], 'Modules.Aplinesimplebenefiticons.Admin') . '</h3>
-            <p>' . $this->trans('Need custom PrestaShop development, performance optimization or integrations?', [], 'Modules.Aplinesimplebenefiticons.Admin') . '</p>
+            <h3>&#9749; ' . $this->trans('Podoba Ci się ten moduł?', [], 'Modules.Aplinesimplebenefiticons.Admin') . '</h3>
+            <p>' . $this->trans('Potrzebujesz rozwoju PrestaShop, optymalizacji wydajności lub integracji?', [], 'Modules.Aplinesimplebenefiticons.Admin') . '</p>
             <a class="btn btn-default" href="https://apline.pl" target="_blank" rel="noopener noreferrer">&#8594; APLINE.PL</a>
         </div>';
     }
@@ -353,24 +395,24 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
         $fields_form = [
             'form' => [
                 'legend' => [
-                    'title' => $this->trans('Display settings', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'title' => $this->trans('Ustawienia wyświetlania', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'icon' => 'icon-cogs',
                 ],
                 'input' => [
                     [
                         'type' => 'select',
-                        'label' => $this->trans('Display location', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                        'label' => $this->trans('Miejsce wyświetlania', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                         'name' => self::HOOK_KEY,
                         'options' => ['query' => $hookOptions, 'id' => 'id', 'name' => 'name'],
-                        'desc' => $this->trans('You can also display the block anywhere with {widget name=\'apline_simple_benefit_icons\'}.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                        'desc' => $this->trans('Możesz też osadzić blok w dowolnym miejscu przez {widget name=\'apline_simple_benefit_icons\'}.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     ],
                     [
                         'type' => 'color',
-                        'label' => $this->trans('Text color', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                        'label' => $this->trans('Kolor tekstu', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                         'name' => self::TEXT_COLOR_KEY,
                     ],
                 ],
-                'submit' => ['title' => $this->trans('Save', [], 'Admin.Actions')],
+                'submit' => ['class' => 'btn btn-primary btn-lg apline-btn-duzy pull-right', 'title' => $this->trans('Zapisz', [], 'Admin.Actions')],
             ],
         ];
 
@@ -399,7 +441,24 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
 
     public function hookDisplayProductAdditionalInfo($params)
     {
-        return $this->renderForHook('displayProductAdditionalInfo');
+        return self::isVirtualProduct($params) ? '' : $this->renderForHook('displayProductAdditionalInfo');
+    }
+
+    /**
+     * Benefits like delivery, returns or warranty do not apply to virtual products (e-books, downloads).
+     *
+     * @param array $params
+     *
+     * @return bool
+     */
+    private static function isVirtualProduct($params)
+    {
+        $product = isset($params['product']) ? $params['product'] : null;
+        if (!$product) {
+            return false;
+        }
+
+        return !empty($product['is_virtual']) || (isset($product['product_type']) && $product['product_type'] === 'virtual');
     }
 
     public function hookDisplayLeftColumn($params)
@@ -414,7 +473,7 @@ class apline_simple_benefit_icons extends Module implements WidgetInterface
 
     public function hookDisplayFooterProduct($params)
     {
-        return $this->renderForHook('displayFooterProduct');
+        return self::isVirtualProduct($params) ? '' : $this->renderForHook('displayFooterProduct');
     }
 
     /**

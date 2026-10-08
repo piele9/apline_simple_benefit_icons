@@ -38,27 +38,27 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
                 'class' => 'fixed-width-xs',
             ],
             'image' => [
-                'title' => $this->trans('Image / Icon', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                'title' => $this->trans('Obraz / ikona', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 'align' => 'center',
                 'callback' => 'printImage',
                 'orderby' => false,
                 'search' => false,
             ],
             'text' => [
-                'title' => $this->trans('Text', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                'title' => $this->trans('Tekst', [], 'Modules.Aplinesimplebenefiticons.Admin'),
             ],
             'url' => [
-                'title' => $this->trans('URL', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                'title' => $this->trans('Adres linku', [], 'Modules.Aplinesimplebenefiticons.Admin'),
             ],
             'active' => [
-                'title' => $this->trans('Displayed', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                'title' => $this->trans('Widoczny', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 'align' => 'center',
                 'active' => 'active',
                 'type' => 'bool',
                 'orderby' => false,
             ],
             'position' => [
-                'title' => $this->trans('Position', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                'title' => $this->trans('Pozycja', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 'align' => 'center',
                 'position' => 'position',
                 'search' => false,
@@ -72,8 +72,8 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
         $this->addRowAction('delete');
         $this->bulk_actions = [
             'delete' => [
-                'text' => $this->trans('Delete selected', [], 'Admin.Actions'),
-                'confirm' => $this->trans('Delete selected items?', [], 'Admin.Notifications.Warning'),
+                'text' => $this->trans('Usuń zaznaczone', [], 'Admin.Actions'),
+                'confirm' => $this->trans('Usunąć zaznaczone elementy?', [], 'Admin.Notifications.Warning'),
             ],
         ];
     }
@@ -103,7 +103,7 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
 
         $this->page_header_toolbar_btn['back_to_config'] = [
             'href' => $this->getConfigUrl(),
-            'desc' => $this->trans('Back to configuration', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+            'desc' => $this->trans('Wróć do konfiguracji', [], 'Modules.Aplinesimplebenefiticons.Admin'),
             'icon' => 'process-icon-back',
         ];
     }
@@ -116,7 +116,7 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
         $back = '<div style="margin:10px 0;"><a class="btn btn-default" href="'
             . htmlspecialchars($this->getConfigUrl(), ENT_QUOTES)
             . '"><i class="icon-chevron-left"></i> '
-            . $this->trans('Back to configuration', [], 'Modules.Aplinesimplebenefiticons.Admin')
+            . $this->trans('Wróć do konfiguracji', [], 'Modules.Aplinesimplebenefiticons.Admin')
             . '</a></div>';
 
         $credit = method_exists($this->module, 'renderAplineFooter')
@@ -148,64 +148,65 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
 
     public function renderForm()
     {
+        $this->addCSS($this->module->getPathUri() . 'views/css/admin.css');
         $this->fields_form = [
             'legend' => [
-                'title' => $this->trans('Simple benefit row', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                'title' => $this->trans('Wiersz korzyści', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 'icon' => 'icon-th-list',
             ],
             'input' => [
                 [
                     'type' => 'file',
-                    'label' => $this->trans('Image', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Obraz', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'image_file',
-                    'desc' => $this->trans('Optional. Allowed: JPG, PNG, WEBP. Max 2 MB. Leave empty to keep the current image or to use an icon instead.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'desc' => $this->trans('Opcjonalny. Formaty: JPG, PNG, WEBP. Maks. 2 MB. Pozostaw puste, aby zachować obraz lub użyć ikony.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('Icon', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Ikona', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'icon',
-                    'desc' => $this->trans('Optional alternative to an image: a unicode hex code (e.g. 1F69A) or an HTML entity (e.g. &#x1F69A;). Used when no image is set.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'desc' => $this->trans('Alternatywa dla obrazu: szesnastkowy kod Unicode (np. 1F69A) lub encja HTML (np. &#x1F69A;). Używana, jeśli nie ma obrazu.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('Alt', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Tekst alternatywny', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'alt',
-                    'desc' => $this->trans('Image alternative text. Required when an image is set. If left empty it is auto-filled from the image file name.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'desc' => $this->trans('Opis obrazu. Wymagany przy obrazie; jeśli pusty, zostanie uzupełniony z nazwy pliku.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('Text', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Tekst', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'text',
                     'required' => true,
                 ],
                 [
                     'type' => 'text',
-                    'label' => $this->trans('URL', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Adres linku', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'url',
-                    'desc' => $this->trans('Optional. When set, the whole row becomes a link.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'desc' => $this->trans('Opcjonalny. Cały wiersz będzie prowadził do podanego adresu.', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->trans('Open link in new tab', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Otwórz link w nowej karcie', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'new_tab',
                     'is_bool' => true,
                     'values' => [
-                        ['id' => 'new_tab_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
-                        ['id' => 'new_tab_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
+                        ['id' => 'new_tab_on', 'value' => 1, 'label' => $this->trans('Tak', [], 'Admin.Global')],
+                        ['id' => 'new_tab_off', 'value' => 0, 'label' => $this->trans('Nie', [], 'Admin.Global')],
                     ],
                 ],
                 [
                     'type' => 'switch',
-                    'label' => $this->trans('Displayed', [], 'Modules.Aplinesimplebenefiticons.Admin'),
+                    'label' => $this->trans('Widoczny', [], 'Modules.Aplinesimplebenefiticons.Admin'),
                     'name' => 'active',
                     'is_bool' => true,
                     'values' => [
-                        ['id' => 'active_on', 'value' => 1, 'label' => $this->trans('Yes', [], 'Admin.Global')],
-                        ['id' => 'active_off', 'value' => 0, 'label' => $this->trans('No', [], 'Admin.Global')],
+                        ['id' => 'active_on', 'value' => 1, 'label' => $this->trans('Tak', [], 'Admin.Global')],
+                        ['id' => 'active_off', 'value' => 0, 'label' => $this->trans('Nie', [], 'Admin.Global')],
                     ],
                 ],
             ],
-            'submit' => ['title' => $this->trans('Save', [], 'Admin.Actions')],
+            'submit' => ['class' => 'btn btn-primary btn-lg apline-btn-duzy pull-right', 'title' => $this->trans('Zapisz', [], 'Admin.Actions')],
         ];
 
         // Preview of the current image when editing.
@@ -227,7 +228,7 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
             if ($isUpdate) {
                 $existing = new AplineSimpleBenefitIconsItem((int) Tools::getValue($this->identifier));
                 if (!Validate::isLoadedObject($existing)) {
-                    $this->errors[] = $this->trans('The item you are trying to edit does not exist.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                    $this->errors[] = $this->trans('Element, który próbujesz edytować, nie istnieje.', [], 'Modules.Aplinesimplebenefiticons.Admin');
 
                     return false;
                 }
@@ -263,24 +264,24 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
 
         // 1. Required: text.
         if ($text === '') {
-            $this->errors[] = $this->trans('The field "Text" is required.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+            $this->errors[] = $this->trans('Pole Tekst jest wymagane.', [], 'Modules.Aplinesimplebenefiticons.Admin');
         }
 
         // 2. Max length 255 (reject, never truncate).
-        foreach (['Text' => $text, 'Alt' => $alt, 'URL' => $url, 'Icon' => $icon] as $label => $value) {
+        foreach (['Tekst' => $text, 'Tekst alternatywny' => $alt, 'Adres linku' => $url, 'Ikona' => $icon] as $label => $value) {
             if (mb_strlen($value) > self::MAX_STRING) {
-                $this->errors[] = $this->trans('The field "%s" exceeds the maximum length of 255 characters.', [$label], 'Modules.Aplinesimplebenefiticons.Admin');
+                $this->errors[] = $this->trans('Pole "%s" przekracza limit 255 znaków.', [$label], 'Modules.Aplinesimplebenefiticons.Admin');
             }
         }
 
         // 3. URL format.
         if ($url !== '' && !Validate::isUrl($url)) {
-            $this->errors[] = $this->trans('The URL is not valid.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+            $this->errors[] = $this->trans('Adres linku jest nieprawidłowy.', [], 'Modules.Aplinesimplebenefiticons.Admin');
         }
 
         // 6. Icon must be a unicode hex or an HTML entity.
         if ($icon !== '' && !preg_match('/^(&#x?[0-9A-Fa-f]+;|&[a-zA-Z]+;|[0-9A-Fa-f]{1,6})$/', $icon)) {
-            $this->errors[] = $this->trans('Icon must be a unicode hex code (e.g. 1F69A) or an HTML entity.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+            $this->errors[] = $this->trans('Ikona musi być szesnastkowym kodem Unicode (np. 1F69A) lub encją HTML.', [], 'Modules.Aplinesimplebenefiticons.Admin');
         }
 
         // 4. Image upload validation (only when a file was actually sent).
@@ -294,14 +295,14 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
             $file = $_FILES['image_file'];
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
-                $this->errors[] = $this->trans('The image upload failed. Please try again.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                $this->errors[] = $this->trans('Nie udało się przesłać obrazu. Spróbuj ponownie.', [], 'Modules.Aplinesimplebenefiticons.Admin');
             } else {
                 $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
 
                 if (!in_array($ext, self::ALLOWED_EXT, true)) {
-                    $this->errors[] = $this->trans('Invalid image format. Allowed formats: JPG, PNG, WEBP.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                    $this->errors[] = $this->trans('Nieprawidłowy format obrazu. Dozwolone: JPG, PNG, WEBP.', [], 'Modules.Aplinesimplebenefiticons.Admin');
                 } elseif ((int) $file['size'] > self::MAX_IMG_BYTES) {
-                    $this->errors[] = $this->trans('The image is too large. Maximum size is 2 MB.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                    $this->errors[] = $this->trans('Obraz jest zbyt duży. Maksymalny rozmiar to 2 MB.', [], 'Modules.Aplinesimplebenefiticons.Admin');
                 } else {
                     // Inspect real content, not just the extension: blocks an
                     // executable payload renamed with an image extension.
@@ -312,13 +313,13 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
                         : in_array($realMime, self::ALLOWED_MIME, true);
 
                     if (!$info || !in_array($realMime, self::ALLOWED_MIME, true) || !$isRealImage) {
-                        $this->errors[] = $this->trans('The uploaded file is not a valid image.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                        $this->errors[] = $this->trans('Przesłany plik nie jest poprawnym obrazem.', [], 'Modules.Aplinesimplebenefiticons.Admin');
                     } else {
                         $fileName = 'asbi_' . uniqid('', true) . '.' . $ext;
                         $dest = $this->module->getUploadDir() . $fileName;
 
                         if (!@move_uploaded_file($file['tmp_name'], $dest)) {
-                            $this->errors[] = $this->trans('Could not save the uploaded image. Check folder permissions.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                            $this->errors[] = $this->trans('Nie udało się zapisać obrazu. Sprawdź uprawnienia katalogu.', [], 'Modules.Aplinesimplebenefiticons.Admin');
                         } else {
                             @chmod($dest, 0644);
                             $newImagePath = __PS_BASE_URI__ . 'modules/apline_simple_benefit_icons/views/img/' . $fileName;
@@ -344,7 +345,7 @@ class AdminAplineSimpleBenefitIconsItemController extends ModuleAdminController
                 $alt = $existing->alt;
             }
             if ($alt === '') {
-                $this->errors[] = $this->trans('The field "Alt" is required when an image is set.', [], 'Modules.Aplinesimplebenefiticons.Admin');
+                $this->errors[] = $this->trans('Tekst alternatywny jest wymagany przy obrazie.', [], 'Modules.Aplinesimplebenefiticons.Admin');
             }
         }
 
