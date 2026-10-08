@@ -1,6 +1,6 @@
 {*
  * APLINE Simple Benefit Icons module for PrestaShop 9.
- * @author APLINE Arkadiusz Pielechowski
+ * @author Arkadiusz Pielechowski
  *}
 {if $items|@count}
   <div class="apline-simple-benefit-icons">

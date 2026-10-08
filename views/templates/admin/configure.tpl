@@ -1,6 +1,6 @@
 {*
  * APLINE Simple Benefit Icons module for PrestaShop 9.
- * @author APLINE Arkadiusz Pielechowski
+ * @author Arkadiusz Pielechowski
  *}
 <div class="panel">
   <h3><i class="icon-th-list"></i> {l s='Ikony korzyści APLINE' d='Modules.Aplinesimplebenefiticons.Admin'}</h3>
